@@ -52,6 +52,10 @@ on:
     - 'infrastructure/**'
     
   pull_request:
+    branches:
+    - "main"
+    paths:
+    - 'infrastructure/**'
 
 permissions:
   contents: read
