@@ -8,11 +8,15 @@ terraform {
   }
 }
 
+locals {
+  region = "us-east-1"
+}
+
 provider "aws" {
   assume_role {
-    role_arn    = arn:aws:iam::276499450488:role/me-terraform-role"
+    role_arn = "arn:aws:iam::276499450488:role/me-terraform-role"
   }
-  region  = "us-east-1"
+  region = local.region
 }
 
 module "network" {
