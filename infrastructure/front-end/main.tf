@@ -9,6 +9,52 @@ resource "aws_s3_bucket" "me-fe-shell-assets" {
   }
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "shell_assests_lifecycles" {
+  bucket = aws_s3_bucket.me-fe-shell-assets.id
+
+  rule {
+    id = "logs-rule"
+
+    filter {
+      prefix = "logs/"
+    }
+
+    transition {
+      days          = 0
+      storage_class = "GLACIER_IR"
+    }
+
+    transition {
+      days          = 90
+      storage_class = "DEEP_ARCHIVE"
+    }
+    # ... other transition/expiration actions ...
+
+    status = "Enabled"
+  }
+
+  rule {
+    id = "builds-rule"
+
+    filter {
+      prefix = "builds/"
+    }
+
+    transition {
+      days          = 0
+      storage_class = "GLACIER_IR"
+    }
+
+    transition {
+      days          = 90
+      storage_class = "DEEP_ARCHIVE"
+    }
+    # ... other transition/expiration actions ...
+
+    status = "Enabled"
+  }
+}
+
 # Bucket for serving the website
 resource "aws_s3_bucket" "me_fe_website" {
   bucket = "me-fe-website"
