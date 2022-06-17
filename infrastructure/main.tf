@@ -6,11 +6,22 @@ terraform {
       version = "4.18.0"
     }
   }
+
+  cloud {
+    organization = "apna-website"
+
+    workspaces {
+      name = "gh-actions-me"
+    }
+  }
+}
+
+locals {
+  region = "us-east-1"
 }
 
 provider "aws" {
-  profile = "personal"
-  region  = "us-east-1"
+  region = local.region
 }
 
 module "network" {
