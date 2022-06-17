@@ -6,6 +6,14 @@ terraform {
       version = "4.18.0"
     }
   }
+
+  cloud {
+    organization = "apna-website"
+
+    workspaces {
+      name = "gh-actions-me"
+    }
+  }
 }
 
 locals {
