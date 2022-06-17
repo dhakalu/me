@@ -13,9 +13,6 @@ locals {
 }
 
 provider "aws" {
-  assume_role {
-    role_arn = "arn:aws:iam::276499450488:role/me-terraform-role"
-  }
   region = local.region
 }
 
