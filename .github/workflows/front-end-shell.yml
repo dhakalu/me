@@ -1,4 +1,4 @@
-name: NodeJS with Webpack
+name: Frontend Shell
 
 on:
   push:
@@ -25,14 +25,18 @@ jobs:
         node-version: 16.x
 
     - name: Install dependencies
+      working-directory: ./front-end/shell
       run: npm install
 
-    - name: Lint 
+    - name: Lint
+      working-directory: ./front-end/shell
       run: npm run lint
 
-    - name: Test 
+    - name: Test
+      working-directory: ./front-end/shell
       run: npm run test
 
     - name: Build
+      working-directory: ./front-end/shell
       run: npm run build
 
