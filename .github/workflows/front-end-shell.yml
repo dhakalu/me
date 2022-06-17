@@ -42,6 +42,7 @@ jobs:
 
     - name: get-npm-version
       id: package-version
+      working-directory: ./front-end/shell
       uses: martinbeentjes/npm-get-version-action@main
 
     - name: Upload to S3
