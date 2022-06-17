@@ -35,3 +35,7 @@ module "network" {
   database_subnet_1_cidr = "10.10.6.0/24"
   database_subnet_2_cidr = "10.10.7.0/24"
 }
+
+module "frontend" {
+  source = "./front-end"
+}
