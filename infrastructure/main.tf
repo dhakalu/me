@@ -9,7 +9,9 @@ terraform {
 }
 
 provider "aws" {
-  profile = "personal"
+  assume_role {
+    role_arn    = arn:aws:iam::276499450488:role/me-terraform-role"
+  }
   region  = "us-east-1"
 }
 
