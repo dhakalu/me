@@ -39,3 +39,10 @@ module "network" {
 module "frontend" {
   source = "./front-end"
 }
+
+module "backend" {
+  source          = "./back-end"
+  vpc_id          = module.network.me_vpc_id
+  public_subnets  = module.network.public_subnets
+  private_subnets = module.network.private_subnets
+}

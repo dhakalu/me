@@ -1,4 +1,3 @@
-## todo apply lifecycle management to artifacts and logs
 # Bucket for holding all the artifacts and the logs for the front-end
 resource "aws_s3_bucket" "me-fe-shell-assets" {
   bucket = "me-fe-shell-assets"
@@ -97,8 +96,6 @@ resource "aws_s3_bucket_policy" "me_fe_shell_assets_policy" {
 resource "aws_cloudfront_distribution" "me_s3_distribution" {
 
   comment = "Serves the content from me-fe-shell-assets bucket"
-
-  #todo configure custom error codes
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
