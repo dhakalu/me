@@ -10,6 +10,8 @@ on:
   pull_request:
     branches:
     - "main"
+    paths:
+    - 'backend-end/services/chat/**'
 
 jobs:
   build-docker:
