@@ -34,7 +34,6 @@ jobs:
       working-directory: ./back-end/services/chat
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker image tag 
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     
     - name: Download task definition
