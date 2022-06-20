@@ -17,15 +17,14 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
+    - name: Login to ECR
+      run: |
+        aws sts get-caller-identity --output json --region us-east-1
+        aws ecr get-login*** us-east-1 | docker login --username AWS --password-stdin 276499450488.dkr.ecr.us-east-1.amazonaws.com
     - name: Build the tagged docker image
       working-directory: ./back-end/services/chat
       run: docker build --tag chat-service:latest .
+    - name: Push the docker image to ECR
+      run: docker tag chat-service:latest ${{secrets.ACCOUNT_NUMBER}}.dkr.ecr.us-east-1.amazonaws.com/chat-service:${{ github.sha }}
     - name: Push to ECR
-      id: ecr
-      uses: jwalton/gh-ecr-push@v1
-      with:
-        access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        region: us-east-1
-        local-image: chat-service:latest
-        image: chat-service:${{ github.sha }}
+      run: docker push ${{secrets.ACCOUNT_NUMBER}}.dkr.ecr.us-east-1.amazonaws.com/chat-service:06ae4a32f2c82fd157c859076270361b8817f55e
