@@ -17,14 +17,15 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
-    - name: Login to DockerHub Registry
-      run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
-    - name: Get the version
-      id: vars
-      run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
-    - name: Build the tagged Docker image
-      run: docker build -t me .
-    - name: Tag the image
-      run: docker tag me:latest me:${{steps.vars.outputs.tag}} 276499450488.dkr.ecr.us-east-2.amazonaws.com/me:latest
-    - name: Push the tagged Docker image
-      run: docker push 276499450488.dkr.ecr.us-east-2.amazonaws.com/me:latest
+    - name: Build the tagged docker image
+      working-directory: ./backend-end/services/chat
+      run: docker build --tag chat-service .
+    - name: Push to ECR
+      id: ecr
+      uses: jwalton/gh-ecr-push@v1
+      with:
+        access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        region: us-east-1
+        local-image: my-image
+        image: my-image:dev-${{ github.sha }}
