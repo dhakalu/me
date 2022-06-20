@@ -18,7 +18,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the tagged docker image
-      working-directory: ./backend-end/services/chat
+      working-directory: ./back-end/services/chat
       run: docker build --tag chat-service .
     - name: Push to ECR
       id: ecr
