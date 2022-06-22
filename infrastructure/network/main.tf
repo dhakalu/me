@@ -1,5 +1,7 @@
 resource "aws_vpc" "me" {
-  cidr_block = var.vpc_cidr
+  cidr_block           = var.vpc_cidr
+  enable_dns_hostnames = true
+  enable_dns_support   = true
   tags = {
     Name        = "me-vpc"
     COST_CENTER = "personal-website"
@@ -102,22 +104,67 @@ resource "aws_route_table" "me_public" {
 resource "aws_eip" "me_nat" {
   vpc = true
 }
-resource "aws_nat_gateway" "me" {
-  allocation_id = aws_eip.me_nat.id
-  subnet_id     = aws_subnet.public_1.id
-  tags = {
-    Name        = "me-nat-gateway"
-    COST_CENTER = "personal-website"
-  }
-}
+# TOO EXPENSIVE TO CREATE A NAT GATEWAY for personal website
+# resource "aws_nat_gateway" "me" {
+#   allocation_id = aws_eip.me_nat.id
+#   subnet_id     = aws_subnet.public_1.id
+#   tags = {
+#     Name        = "me-nat-gateway"
+#     COST_CENTER = "personal-website"
+#   }
+# }
+
+# VPC Endpoint Security Group
+
+# resource "aws_security_group" "vpc_endpoint" {
+#   name   = "me-vpce-sg"
+#   vpc_id = aws_vpc.me.id
+#   ingress {
+#     from_port   = 443
+#     to_port     = 443
+#     protocol    = "tcp"
+#     cidr_blocks = [aws_vpc.me.cidr_block]
+#   }
+
+#   egress {
+#     from_port        = 0
+#     to_port          = 0
+#     protocol         = "-1"
+#     cidr_blocks      = ["0.0.0.0/0"]
+#     ipv6_cidr_blocks = ["::/0"]
+#   }
+
+#   tags = {
+#     Name = "me-endpoints-sg"
+#   }
+# }
+
+# resource "aws_vpc_endpoint" "ecr_api" {
+#   for_each = {
+#     "ecr-api" : "ecr.api",
+#     "ecr-dkr" : "ecr.dkr",
+#     "s3" : "s3",
+#     "logs" : "logs",
+#     "ssm" : "ssm",
+#     "secretsmanager" : "secretsmanager",
+#     "kms" : "kms",
+#   }
+#   vpc_id       = aws_vpc.me.id
+#   service_name = "com.amazonaws.us-east-1.${each.value}"
+
+#   vpc_endpoint_type  = each.key == "s3" ? "Gateway" : "Interface"
+#   subnet_ids         = each.key == "s3" ? null : [aws_subnet.private_1.id, aws_subnet.private_2.id, aws_subnet.private_3.id]
+#   route_table_ids    = each.key == "s3" ? [aws_route_table.me_private.id] : null
+#   security_group_ids = each.key == "s3" ? null : [aws_security_group.vpc_endpoint.id]
+
+#   tags = {
+#     Name        = "me-endpoint-${each.key}"
+#     COST_CENTER = "personal-website"
+#   }
+# }
 
 resource "aws_route_table" "me_private" {
   vpc_id = aws_vpc.me.id
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.me.id
-  }
 
   tags = {
     Name        = "me-private-route-table"
@@ -125,27 +172,15 @@ resource "aws_route_table" "me_private" {
   }
 }
 
-resource "aws_route_table_association" "public_rta_subnet_1" {
-  subnet_id      = aws_subnet.public_1.id
+resource "aws_route_table_association" "public" {
+  for_each       = toset([aws_subnet.public_1.id, aws_subnet.public_2.id])
+  subnet_id      = each.value
   route_table_id = aws_route_table.me_public.id
 }
 
-resource "aws_route_table_association" "public_rta_subnet_2" {
-  subnet_id      = aws_subnet.public_2.id
-  route_table_id = aws_route_table.me_public.id
-}
 
-resource "aws_route_table_association" "private_rta_subnet_1" {
-  subnet_id      = aws_subnet.private_1.id
-  route_table_id = aws_route_table.me_private.id
-}
-
-resource "aws_route_table_association" "private_rta_subnet_2" {
-  subnet_id      = aws_subnet.private_2.id
-  route_table_id = aws_route_table.me_private.id
-}
-
-resource "aws_route_table_association" "private_rta_subnet_3" {
-  subnet_id      = aws_subnet.private_3.id
+resource "aws_route_table_association" "private" {
+  for_each       = toset([aws_subnet.private_1.id, aws_subnet.private_2.id, aws_subnet.private_3.id])
+  subnet_id      = each.value
   route_table_id = aws_route_table.me_private.id
 }

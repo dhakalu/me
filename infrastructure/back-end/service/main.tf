@@ -42,7 +42,7 @@ resource "aws_ecs_task_definition" "me_service_chat" {
   [
   {
     "name": "${local.service_name}",
-    "image": "276499450488.dkr.ecr.us-east-2.amazonaws.com/me:latest",
+    "image": "276499450488.dkr.ecr.us-east-1.amazonaws.com/chat-service:4633cfcd9afdf9307ee350d8028a11fbe8dd7419",
     "cpu": 256,
     "memory": 512,
     "essential": true,
@@ -77,6 +77,7 @@ resource "aws_ecs_service" "me_service_chat" {
   desired_count   = 1
   launch_type     = local.launch_type
 
+
   load_balancer {
     target_group_arn = aws_lb_target_group.me_service_chat.arn
     container_name   = local.service_name
@@ -84,7 +85,8 @@ resource "aws_ecs_service" "me_service_chat" {
   }
 
   network_configuration {
-    security_groups = var.cluster_security_group_ids
-    subnets         = var.subnet_ids
+    security_groups  = var.cluster_security_group_ids
+    subnets          = var.subnet_ids
+    assign_public_ip = true
   }
 }

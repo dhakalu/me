@@ -43,7 +43,7 @@ module "chat_service" {
   vpc_id                     = var.vpc_id
   cluster_id                 = aws_ecs_cluster.me_services.id
   cluster_security_group_ids = [module.security_groups.services_cluster]
-  subnet_ids                 = var.private_subnets
+  subnet_ids                 = var.public_subnets
   execution_role_arn         = module.roles.execution_arn
 }
 
