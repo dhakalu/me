@@ -8,75 +8,40 @@ resource "aws_vpc" "me" {
   }
 }
 
-resource "aws_subnet" "public_1" {
+resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.me.id
-  cidr_block        = var.public_subnet_1_cidr
-  availability_zone = "us-east-1a"
+  for_each          = var.public_subnets_cidr
+  cidr_block        = each.value
+  availability_zone = each.key
   tags = {
-    Name        = "me-public-subnet-1"
+    Name        = "me-public-${index(keys(var.public_subnets_cidr), each.key) + 1}"
     COST_CENTER = "personal-website"
   }
 }
 
-resource "aws_subnet" "public_2" {
+
+resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.me.id
-  cidr_block        = var.public_subnet_2_cidr
-  availability_zone = "us-east-1b"
+  for_each          = var.private_subnets_cidr
+  cidr_block        = each.value
+  availability_zone = each.key
   tags = {
-    Name        = "me-public-subnet-2"
+    Name        = "me-private-${index(keys(var.private_subnets_cidr), each.key) + 1}"
     COST_CENTER = "personal-website"
   }
 }
 
-resource "aws_subnet" "private_1" {
+resource "aws_subnet" "database" {
   vpc_id            = aws_vpc.me.id
-  cidr_block        = var.private_subnet_1_cidr
-  availability_zone = "us-east-1a"
+  for_each          = var.database_subnets_cidr
+  cidr_block        = each.value
+  availability_zone = each.key
   tags = {
-    Name        = "me-private-subnet-1"
+    Name        = "me-database-${index(keys(var.database_subnets_cidr), each.key) + 1}"
     COST_CENTER = "personal-website"
   }
 }
 
-resource "aws_subnet" "private_2" {
-  vpc_id            = aws_vpc.me.id
-  cidr_block        = var.private_subnet_2_cidr
-  availability_zone = "us-east-1b"
-  tags = {
-    Name        = "me-private-subnet-2"
-    COST_CENTER = "personal-website"
-  }
-}
-
-resource "aws_subnet" "private_3" {
-  vpc_id            = aws_vpc.me.id
-  cidr_block        = var.private_subnet_3_cidr
-  availability_zone = "us-east-1c"
-  tags = {
-    Name        = "me-private-subnet-3"
-    COST_CENTER = "personal-website"
-  }
-}
-
-resource "aws_subnet" "database_1" {
-  vpc_id            = aws_vpc.me.id
-  cidr_block        = var.database_subnet_1_cidr
-  availability_zone = "us-east-1a"
-  tags = {
-    Name        = "me-database-subnet-1"
-    COST_CENTER = "personal-website"
-  }
-}
-
-resource "aws_subnet" "database_2" {
-  vpc_id            = aws_vpc.me.id
-  cidr_block        = var.database_subnet_2_cidr
-  availability_zone = "us-east-1b"
-  tags = {
-    Name        = "me-database-subnet-2"
-    COST_CENTER = "personal-website"
-  }
-}
 
 resource "aws_internet_gateway" "me" {
   vpc_id = aws_vpc.me.id
@@ -101,9 +66,9 @@ resource "aws_route_table" "me_public" {
   }
 }
 
-resource "aws_eip" "me_nat" {
-  vpc = true
-}
+# resource "aws_eip" "me_nat" {
+#   vpc = true
+# }
 # TOO EXPENSIVE TO CREATE A NAT GATEWAY for personal website
 # resource "aws_nat_gateway" "me" {
 #   allocation_id = aws_eip.me_nat.id
@@ -173,14 +138,16 @@ resource "aws_route_table" "me_private" {
 }
 
 resource "aws_route_table_association" "public" {
-  for_each       = toset([aws_subnet.public_1.id, aws_subnet.public_2.id])
+  for_each = tomap({ for idx, subnet in aws_subnet.public :
+    idx => subnet.id
+  })
   subnet_id      = each.value
   route_table_id = aws_route_table.me_public.id
 }
 
 
 resource "aws_route_table_association" "private" {
-  for_each       = toset([aws_subnet.private_1.id, aws_subnet.private_2.id, aws_subnet.private_3.id])
+  for_each       = tomap({ for idx, subnet in aws_subnet.private : idx => subnet.id })
   subnet_id      = each.value
   route_table_id = aws_route_table.me_private.id
 }
