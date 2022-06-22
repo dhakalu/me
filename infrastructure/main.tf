@@ -46,3 +46,7 @@ module "backend" {
   public_subnets  = module.network.public_subnets
   private_subnets = module.network.private_subnets
 }
+
+module "terraform_role" {
+  source = "./roles"
+}
