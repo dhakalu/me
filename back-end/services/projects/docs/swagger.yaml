@@ -1,0 +1,161 @@
+basePath: /
+definitions:
+  dtos.SchoolCreateRequest:
+    properties:
+      address:
+        type: string
+      city:
+        type: string
+      email:
+        type: string
+      fax:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      providence:
+        type: string
+      website:
+        type: string
+      zip:
+        type: string
+    type: object
+  entities.School:
+    properties:
+      address:
+        type: string
+      city:
+        type: string
+      createdAt:
+        type: string
+      email:
+        type: string
+      fax:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      providence:
+        type: string
+      updatedAt:
+        type: string
+      website:
+        type: string
+      zip:
+        type: string
+    type: object
+  routes.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Rest APIs to serve request related to school model/object.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: School API
+  version: "1.0"
+paths:
+  /api/v1/schools:
+    get:
+      description: Retrieve list of all the available schools.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.School'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      summary: Get all schools.
+      tags:
+      - school
+    post:
+      consumes:
+      - application/json
+      description: Adds a school in database.
+      parameters:
+      - description: JSON object representing a school.
+        in: body
+        name: school
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.SchoolCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.School'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      summary: Create a school
+      tags:
+      - school
+  /api/v1/schools/{id}:
+    delete:
+      description: Removes a school by its id. Id is unique for each school.
+      parameters:
+      - description: School ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.School'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      summary: Delete a school
+      tags:
+      - school
+    get:
+      description: Retreive a school by its id. Id is unique for each school.
+      parameters:
+      - description: School ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.School'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/routes.ErrorResponse'
+      summary: Get single school
+      tags:
+      - school
+schemes:
+- http
+swagger: "2.0"
