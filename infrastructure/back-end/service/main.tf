@@ -1,7 +1,7 @@
 
 locals {
   service_name = "me-service-chat"
-  launch_type  = "FARGATE"
+  launch_type  = "EC2"
   log_group    = "/me/service/chat"
   region       = "us-east-1"
 }
@@ -30,45 +30,6 @@ resource "aws_cloudwatch_log_group" "me_service_chat" {
     service = local.service_name
   }
 }
-
-resource "aws_ecs_task_definition" "me_service_chat" {
-  family                   = local.service_name
-  requires_compatibilities = [local.launch_type]
-  cpu                      = 256
-  memory                   = 512
-  network_mode             = "awsvpc"
-  execution_role_arn       = var.execution_role_arn
-  container_definitions    = <<TASK_DEFINITION
-  [
-  {
-    "name": "${local.service_name}",
-    "image": "276499450488.dkr.ecr.us-east-2.amazonaws.com/me:latest",
-    "cpu": 256,
-    "memory": 512,
-    "essential": true,
-    "portMappings": [
-      {
-        "containerPort": 5000,
-        "hostPort": 5000
-      }
-    ],
-    "logConfiguration": {
-      "logDriver": "awslogs",
-      "options": {
-        "awslogs-group": "${local.log_group}",
-        "awslogs-region": "${local.region}",
-        "awslogs-stream-prefix": "ecs"
-      }
-    }
-  }
-]
-TASK_DEFINITION
-
-  tags = {
-    Name = local.service_name
-  }
-}
-
 
 resource "aws_ecs_service" "me_service_chat" {
   name            = local.service_name

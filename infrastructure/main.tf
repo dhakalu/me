@@ -24,16 +24,29 @@ provider "aws" {
   region = local.region
 }
 
+locals {
+  vpc_cidr = "10.10.0.0/16"
+  public_cidrs = {
+    us-east-1a : "10.10.4.0/24",
+    us-east-1b : "10.10.5.0/24"
+  }
+  private_cidrs = {
+    us-east-1a : "10.10.1.0/24",
+    us-east-1b : "10.10.2.0/24",
+    us-east-1c : "10.10.3.0/24"
+  }
+  database_cidrs = {
+    us-east-1a : "10.10.6.0/24",
+    us-east-1b : "10.10.7.0/24"
+  }
+}
+
 module "network" {
-  source                 = "./network"
-  vpc_cidr               = "10.10.0.0/16"
-  private_subnet_1_cidr  = "10.10.1.0/24"
-  private_subnet_2_cidr  = "10.10.2.0/24"
-  private_subnet_3_cidr  = "10.10.3.0/24"
-  public_subnet_1_cidr   = "10.10.4.0/24"
-  public_subnet_2_cidr   = "10.10.5.0/24"
-  database_subnet_1_cidr = "10.10.6.0/24"
-  database_subnet_2_cidr = "10.10.7.0/24"
+  source                = "./network"
+  vpc_cidr              = local.vpc_cidr
+  public_subnets_cidr   = local.public_cidrs
+  database_subnets_cidr = local.database_cidrs
+  private_subnets_cidr  = local.private_cidrs
 }
 
 module "frontend" {
@@ -45,4 +58,8 @@ module "backend" {
   vpc_id          = module.network.me_vpc_id
   public_subnets  = module.network.public_subnets
   private_subnets = module.network.private_subnets
+}
+
+module "terraform_role" {
+  source = "./roles"
 }
