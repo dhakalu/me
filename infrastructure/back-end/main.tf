@@ -38,6 +38,7 @@ module "roles" {
   source = "./roles"
 }
 
+
 module "chat_service" {
   source                     = "./service"
   vpc_id                     = var.vpc_id

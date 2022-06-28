@@ -74,7 +74,7 @@ resource "aws_ecs_service" "me_service_chat" {
   name            = local.service_name
   cluster         = var.cluster_id
   task_definition = aws_ecs_task_definition.me_service_chat.arn
-  desired_count   = 1
+  desired_count   = 0
   launch_type     = local.launch_type
 
 
