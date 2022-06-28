@@ -42,10 +42,12 @@ module "roles" {
 module "chat_service" {
   source                     = "./service"
   vpc_id                     = var.vpc_id
+  ecs_image_id               = "ami-06634c1b99d35f2c7"
   cluster_id                 = aws_ecs_cluster.me_services.id
   cluster_security_group_ids = [module.security_groups.services_cluster]
   subnet_ids                 = var.public_subnets
   execution_role_arn         = module.roles.execution_arn
+  ecs_instance_profile       = module.roles.ecs_instance_profile
 }
 
 module "security_groups" {
