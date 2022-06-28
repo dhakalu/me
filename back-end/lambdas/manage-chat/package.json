@@ -1,0 +1,10 @@
+{
+  "name": "chat-predict",
+  "version": "1.0.0",
+  "description": "Service that predicts the response based on user utterance",
+  "author": "",
+  "devDependencies": {
+    "serverless-python-requirements": "^5.1.0",
+    "serverless-wsgi": "^1.7.6"
+  }
+}
