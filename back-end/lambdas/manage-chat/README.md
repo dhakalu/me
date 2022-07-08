@@ -6,10 +6,12 @@ This repo contains the code for powering manage-chat service. This service creat
 
 ## Local Development
 
+**Make sure you have python 3.7 as pytorch is not compatible with 3.8 yet.**
+
 - Create virtual environment to run this project
 
 ```sh
-    python3.8 -m venv ./venv
+    python3 -m venv ./venv
     source ./venv/bin/activate
 ```
 
